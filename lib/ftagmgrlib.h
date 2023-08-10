@@ -23,11 +23,11 @@ namespace ftagmgr {
 
     /**
      * @brief Checks the existence of a directory in the database
-     * @param dirPath Path of the directory to check
+     * @param path Path of the directory to check
      * @param errmsg SQLite3 error message char**
      * @retval -1 An error has occurred
      * @retval 0 Directory does not exist
      * @retval 1 Directory does exist
      */
-    short dirExists(const char* dirPath, char** errmsg);
+    short dirExists(const char* path, char** errmsg);
 }
