@@ -1,0 +1,29 @@
+#!/bin/bash
+# Check for compiled library
+if [ -f ftagmgr.o ]; then
+    echo Compiled object exists, deleting.
+    rm -v ftagmgr.o
+fi
+if [ -f ftagmgr.a ]; then
+    echo Library exists, deleting.
+    rm -v ftagmgr.a
+fi
+# Recompile
+echo Compiling...
+g++ -c ftagmgr.cpp
+# Check compilation result
+if [ -f ftagmgr.o ]; then
+    echo Creating library...
+    ar r ftagmgr.a ftagmgr.o
+    if [ -f ftagmgr.a ]; then
+        echo Deleting object file.
+        rm -v ftagmgr.o
+        echo -e "\e[38;5;2mCompilation successful! \e[0m"
+    else
+        echo -e "\e[38;5;1mCouldn't create library! \e[0m"
+        echo -e "\e[38;5;3mCheck if \e[38;5;5mar r ftagmgr.a ftagmgr.o\e[38;5;3m works\e[0m"
+    fi
+else
+    echo -e "\e[38;5;1mCompilation failed, cannot create library! \e[0m"
+    echo -e "\e[38;5;3mCheck if \e[38;5;5mg++ -c ftagmgr.cpp\e[38;5;3m works\e[0m"
+fi
