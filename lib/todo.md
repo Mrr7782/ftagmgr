@@ -1,7 +1,4 @@
 # Functions
-- unsigned int getDir(const char* path)
-  - -1 - Error / doesn't exist
-  - (id) - Directory ID
 - bool getDirName(unsigned int id, char* name)
   - False - Error
   - True - Directory found, name returned

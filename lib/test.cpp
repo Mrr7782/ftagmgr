@@ -22,10 +22,10 @@ int main() {
         err = nullptr;
     } else std::cout << "Database creation failed, FTagMgrLib error." << std::endl;
     // Check dir existence
-    short res = ftagmgr::dirExists("/tmp/test", &err);
-    if (res == 0) {
+    short sres = ftagmgr::dirExists("/tmp/test", &err);
+    if (sres == 0) {
         std::cout << "Non-existent directory check OK." << std::endl;
-    } else if (res == 1) {
+    } else if (sres == 1) {
         std::cout << "Non-existent directory check failed." << std::endl << "Non-existent directory reported as existing." << std::endl;
     } else {
         std::cout << "Non-existent directory check failed, ";
@@ -52,10 +52,10 @@ int main() {
         }
     }
     // Check dir existence again
-    res = -2;
-    res = ftagmgr::dirExists("/tmp/test", &err);
-    if (res == 1) std::cout << "Existent directory check OK." << std::endl;
-    else if (res == 0) std::cout << "Existent directory check failed." << std::endl << "Existent directory reported as not existing." << std::endl;
+    sres = -2;
+    sres = ftagmgr::dirExists("/tmp/test", &err);
+    if (sres == 1) std::cout << "Existent directory check OK." << std::endl;
+    else if (sres == 0) std::cout << "Existent directory check failed." << std::endl << "Existent directory reported as not existing." << std::endl;
     else {
         std::cout << "Existent directory check failed, ";
         if (err) {
@@ -66,5 +66,17 @@ int main() {
             std::cout << "FTagMgrLib error." << std::endl;
         }
     }
+    // Get directory ID
+    unsigned int uires = ftagmgr::getDir("/tmp/test", &err);
+    if (uires == -1) {
+        std::cout << "Getting the directory ID failed, ";
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else {
+            std::cout << "FTagMgrLib error." << std::endl;
+        }
+    } else std::cout << "Getting the directory ID OK. (" << uires << ")" << std::endl;
     return 0;
 }

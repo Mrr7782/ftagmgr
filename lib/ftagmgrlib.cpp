@@ -10,7 +10,7 @@
 namespace ftagmgr {
     std::string databasePath;
     // What to do when callback is called
-    enum enum_callback { CALLBACK_NULL, CALLBACK_DIRCHECK };
+    enum enum_callback { CALLBACK_NULL, CALLBACK_DIRCHECK, CALLBACK_GETID };
     enum_callback callbackAction = CALLBACK_NULL;
     // Used for callback
     void* sharedVar = nullptr;
@@ -22,6 +22,17 @@ namespace ftagmgr {
      */
     void setDatabasePath(const char* path) {
         databasePath = path;
+    }
+
+    /**
+     * @brief Check database file existence
+     * @retval true File exists
+     * @retval false File does not exist
+     */
+    bool checkDatabaseExistence() {
+        struct stat fileStat;
+        if (stat(databasePath.c_str(), &fileStat) == 0) return true;
+        else return false;
     }
 
     /**
@@ -41,6 +52,10 @@ namespace ftagmgr {
                 // If something was returned, the dir was found
                 if (argc) *(bool*)sharedVar = true;
                 break;
+            case CALLBACK_GETID:
+                // Return argv if possible
+                if (argc) *(unsigned int*)sharedVar = strtoul(argv[0], nullptr, 10);
+                break;
         }
         return 0;
     }
@@ -52,9 +67,8 @@ namespace ftagmgr {
      * @retval false Database creation failed - check for file existence and/or write access to directory
      */
     bool createDatabase(char** errmsg) {
-        // Check that file at path doesn't exist
-        struct stat fileStat;
-        if (stat(databasePath.c_str(), &fileStat) == 0) return false;
+        // Check that the database file doesn't exist
+        if(checkDatabaseExistence()) return false;
         // Open (create) database, check if it's open
         sqlite3* db = nullptr;
         int ecode = 0; //Exit code
@@ -93,8 +107,7 @@ namespace ftagmgr {
      */
     short dirExists(const char* path, char** errmsg) {
         // Check database file existence
-        struct stat fileStat;
-        if (stat(databasePath.c_str(), &fileStat)) return -1;
+        if (!checkDatabaseExistence()) return -1;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -150,5 +163,40 @@ namespace ftagmgr {
             sqlite3_close(db);
             return true;
         } else return false;
+    }
+
+    /**
+     * @brief Get directory ID by path
+     * @param path The directory path to search for
+     * @param errmsg SQLite3 error message char**
+     * @retval -1 Error or directory doesn't exist
+     * @return The ID of the directory
+     */
+    unsigned int getDir(const char* path, char** errmsg) {
+        // Check database existence
+        if (!checkDatabaseExistence()) return -1;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        if (!db) return -1;
+        // Prepare callback
+        unsigned int res = 0;
+        callbackAction = CALLBACK_GETID;
+        sharedVar = &res;
+        // Prepare query
+        std::string query = "SELECT id FROM dir WHERE path = \"";
+        query += path;
+        query += "\";";
+        // Run query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            return -1;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        return res;
     }
 }

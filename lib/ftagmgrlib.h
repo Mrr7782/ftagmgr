@@ -39,4 +39,13 @@ namespace ftagmgr {
      * @retval false Directory could not be added
      */
     bool addDir(const char* path, char** errmsg);
+
+    /**
+     * @brief Get directory ID by path
+     * @param path The directory path to search for
+     * @param errmsg SQLite3 error message char**
+     * @retval -1 Error or directory doesn't exist
+     * @return The ID of the directory
+     */
+    unsigned int getDir(const char* path, char** errmsg);
 }
