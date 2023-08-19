@@ -14,6 +14,7 @@ int main() {
     // Setup
     char* err = nullptr;
     ftagmgr::setDatabasePath("./test.db");
+
     // Create database
     if (ftagmgr::createDatabase(&err)) std::cout << "Database creation OK." << std::endl;
     else if (err) {
@@ -21,22 +22,20 @@ int main() {
         sqlite3_free(err);
         err = nullptr;
     } else std::cout << "Database creation failed, FTagMgrLib error." << std::endl;
+
     // Check dir existence
     short sres = ftagmgr::dirExists("/tmp/test", &err);
-    if (sres == 0) {
-        std::cout << "Non-existent directory check OK." << std::endl;
-    } else if (sres == 1) {
-        std::cout << "Non-existent directory check failed." << std::endl << "Non-existent directory reported as existing." << std::endl;
-    } else {
+    if (sres == 0) std::cout << "Non-existent directory check OK." << std::endl;
+    else if (sres == 1) std::cout << "Non-existent directory check failed." << std::endl << "Non-existent directory reported as existing." << std::endl;
+    else {
         std::cout << "Non-existent directory check failed, ";
         if (err) {
             std::cout << "SQLite3 error." << std::endl << err << std::endl;
             sqlite3_free(err);
             err = nullptr;
-        } else {
-            std::cout << "FTagMgrLib error." << std::endl;
-        }
+        } else std::cout << "FTagMgrLib error." << std::endl;
     }
+
     // Add dir
     bool bres = false;
     bres = ftagmgr::addDir("/tmp/test", &err);
@@ -47,10 +46,9 @@ int main() {
             std::cout << "SQLite3 error." << std::endl << err << std::endl;
             sqlite3_free(err);
             err = nullptr;
-        } else {
-            std::cout << "FTagMgrLib error." << std::endl;
-        }
+        } else std::cout << "FTagMgrLib error." << std::endl;
     }
+
     // Check dir existence again
     sres = -2;
     sres = ftagmgr::dirExists("/tmp/test", &err);
@@ -62,10 +60,9 @@ int main() {
             std::cout << "SQLite3 error." << std::endl << err << std::endl;
             sqlite3_free(err);
             err = nullptr;
-        } else {
-            std::cout << "FTagMgrLib error." << std::endl;
-        }
+        } else std::cout << "FTagMgrLib error." << std::endl;
     }
+
     // Get directory ID
     unsigned int uires = ftagmgr::getDir("/tmp/test", &err);
     if (uires == -1) {
@@ -74,9 +71,33 @@ int main() {
             std::cout << "SQLite3 error." << std::endl << err << std::endl;
             sqlite3_free(err);
             err = nullptr;
-        } else {
-            std::cout << "FTagMgrLib error." << std::endl;
-        }
+        } else std::cout << "FTagMgrLib error." << std::endl;
     } else std::cout << "Getting the directory ID OK. (" << uires << ")" << std::endl;
+
+    // Get directory path
+    std::string strres = "";
+    if (ftagmgr::getDirPath(1, &strres, &err)) std::cout << "Getting the directory path OK. (\"" << strres << "\")" << std::endl;
+    else {
+        std::cout << "Getting the directory path failed, ";
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else std::cout << "FTagMgrLib error." << std::endl;
+    }
+
+    // Get directory path by ID by path
+    strres = "";
+    // Writing code like this is a bad idea, but who cares
+    // this is just a test program anyway
+    if (ftagmgr::getDirPath(ftagmgr::getDir("/tmp/test", &err), &strres, &err)) std::cout << "Getting the directory path by its ID by its path OK. (\"" << strres << "\")" << std::endl;
+    else {
+        std::cout << "Getting the directory path by its ID by its path failed, ";
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else std::cout << "FTagMgrLib error." << std::endl;
+    }
     return 0;
 }

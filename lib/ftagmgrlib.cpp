@@ -4,13 +4,14 @@
  */
 
 #include <string>
+#include <cstring>
 #include <sys/stat.h>
 #include <sqlite3.h>
 
 namespace ftagmgr {
     std::string databasePath;
     // What to do when callback is called
-    enum enum_callback { CALLBACK_NULL, CALLBACK_DIRCHECK, CALLBACK_GETID };
+    enum enum_callback { CALLBACK_NULL, CALLBACK_DIRCHECK, CALLBACK_GETID, CALLBACK_GETDIRPATH };
     enum_callback callbackAction = CALLBACK_NULL;
     // Used for callback
     void* sharedVar = nullptr;
@@ -55,6 +56,10 @@ namespace ftagmgr {
             case CALLBACK_GETID:
                 // Return argv if possible
                 if (argc) *(unsigned int*)sharedVar = strtoul(argv[0], nullptr, 10);
+                break;
+            case CALLBACK_GETDIRPATH:
+                // Copy path char* if possible
+                if (argc) *(std::string*)sharedVar = std::string(argv[0]);
                 break;
         }
         return 0;
@@ -198,5 +203,39 @@ namespace ftagmgr {
         sqlite3_close(db);
         callbackAction = CALLBACK_NULL;
         return res;
+    }
+
+    /**
+     * @brief Get directory path by ID
+     * @param id The directory ID to search for
+     * @param path Pointer to the return std::string
+     * @param errmsg SQLite3 error message char**
+     * @retval true Directory found, name returned
+     * @retval false An error has occurred
+     */
+    bool getDirPath(unsigned int id, std::string* path, char** errmsg) {
+        // Check database existence
+        if (!checkDatabaseExistence()) return false;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        // Prepare callback
+        callbackAction = CALLBACK_GETDIRPATH;
+        sharedVar = path;
+        // Prepare query
+        std::string query = "SELECT path FROM dir WHERE id = ";
+        query += std::to_string(id);
+        query += ";";
+        // Run query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            return false;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        return true;
     }
 }

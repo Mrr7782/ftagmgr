@@ -1,7 +1,4 @@
 # Functions
-- bool getDirName(unsigned int id, char* name)
-  - False - Error
-  - True - Directory found, name returned
 - short fileExists(unsigned int dir, const char* filename)
   - -1 - Error
   - 0 - Does not exist

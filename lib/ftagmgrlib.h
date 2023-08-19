@@ -48,4 +48,14 @@ namespace ftagmgr {
      * @return The ID of the directory
      */
     unsigned int getDir(const char* path, char** errmsg);
+
+    /**
+     * @brief Get directory path by ID
+     * @param id The directory ID to search for
+     * @param path Pointer to the return std::string
+     * @param errmsg SQLite3 error message char**
+     * @retval true Directory found, name returned
+     * @retval false An error has occurred
+     */
+    bool getDirPath(unsigned int id, std::string* path, char** errmsg);
 }
