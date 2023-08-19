@@ -1,7 +1,4 @@
 # Functions
-- bool addDir(const char* path)
-  - False - Error
-  - True - Directory added
 - unsigned int getDir(const char* path)
   - -1 - Error / doesn't exist
   - (id) - Directory ID

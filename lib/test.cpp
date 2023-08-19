@@ -37,5 +37,34 @@ int main() {
             std::cout << "FTagMgrLib error." << std::endl;
         }
     }
+    // Add dir
+    bool bres = false;
+    bres = ftagmgr::addDir("/tmp/test", &err);
+    if (bres) std::cout << "Directory addition OK." << std::endl;
+    else {
+        std::cout << "Directory addition failed, ";
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else {
+            std::cout << "FTagMgrLib error." << std::endl;
+        }
+    }
+    // Check dir existence again
+    res = -2;
+    res = ftagmgr::dirExists("/tmp/test", &err);
+    if (res == 1) std::cout << "Existent directory check OK." << std::endl;
+    else if (res == 0) std::cout << "Existent directory check failed." << std::endl << "Existent directory reported as not existing." << std::endl;
+    else {
+        std::cout << "Existent directory check failed, ";
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else {
+            std::cout << "FTagMgrLib error." << std::endl;
+        }
+    }
     return 0;
 }

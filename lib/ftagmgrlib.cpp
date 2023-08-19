@@ -110,13 +110,45 @@ namespace ftagmgr {
         std::string query = "SELECT id FROM dir WHERE path = \"";
         query += path;
         query += "\";";
-        ecode = sqlite3_exec(db, query.c_str(), nullptr, nullptr, errmsg);
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
             return -1;
         }
         // Close database and return
         sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
         return result ? 1 : 0;
+    }
+
+    /**
+     * @brief Adds a directory to the database
+     * @param path The path of the directory
+     * @param errmsg SQLite3 error message char**
+     * @retval true Directory added
+     * @retval false Directory could not be added
+     */
+    bool addDir(const char* path, char** errmsg) {
+        //Check directory existence
+        if (!dirExists(path, errmsg)) {
+            // Open database
+            sqlite3* db = nullptr;
+            int ecode = 0;
+            sqlite3_open(databasePath.c_str(), &db);
+            if (!db) return false;
+            // Prepare query
+            std::string query = "INSERT INTO dir(path) VALUES(\"";
+            query += path;
+            query += "\");";
+            // Run query
+            ecode = sqlite3_exec(db, query.c_str(), nullptr, nullptr, errmsg);
+            if (ecode != SQLITE_OK) {
+                sqlite3_close(db);
+                return false;
+            }
+            // Close database and return
+            sqlite3_close(db);
+            return true;
+        } else return false;
     }
 }

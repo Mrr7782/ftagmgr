@@ -30,4 +30,13 @@ namespace ftagmgr {
      * @retval 1 Directory does exist
      */
     short dirExists(const char* path, char** errmsg);
+
+    /**
+     * @brief Adds a directory to the database
+     * @param path The path of the directory
+     * @param errmsg SQLite3 error message char**
+     * @retval true Directory added
+     * @retval false Directory could not be added
+     */
+    bool addDir(const char* path, char** errmsg);
 }
