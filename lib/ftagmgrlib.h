@@ -89,4 +89,14 @@ namespace ftagmgr {
      * @return The ID of the file
      */
     int getFile(unsigned int dir, const char* filename, char** errmsg);
+
+    /**
+     * @brief Get filename by ID
+     * @param id File ID
+     * @param filename Pointer to the return std::string
+     * @param errmsg SQLite error message char**
+     * @retval true File found, filename returned
+     * @retval false An error has occurred
+     */
+    bool getFileName(unsigned int id, std::string* filename, char** errmsg);
 }

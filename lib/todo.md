@@ -1,7 +1,4 @@
 # Functions
-- bool getFileName(unsigned int id, char* filename)
-  - False - Error
-  - True - File found, filename returned
 
 # Database structure
 - Table tag

@@ -132,6 +132,8 @@ namespace ftagmgr {
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
             return -1;
         }
         // Close database and return
@@ -199,6 +201,8 @@ namespace ftagmgr {
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
             return -1;
         }
         // Close database and return
@@ -234,6 +238,8 @@ namespace ftagmgr {
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
             return false;
         }
         // Close database and return
@@ -273,6 +279,8 @@ namespace ftagmgr {
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
             return -1;
         }
         // Close database and return
@@ -346,6 +354,8 @@ namespace ftagmgr {
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
             return -1;
         }
         // Close database and return
@@ -353,5 +363,42 @@ namespace ftagmgr {
         callbackAction = CALLBACK_NULL;
         sharedVar = nullptr;
         return res;
+    }
+
+    /**
+     * @brief Get filename by ID
+     * @param id File ID
+     * @param filename Pointer to the return std::string
+     * @param errmsg SQLite error message char**
+     * @retval true File found, filename returned
+     * @retval false An error has occurred
+     */
+    bool getFileName(unsigned int id, std::string* filename, char** errmsg) {
+        // Check database file existence
+        if (!checkDatabaseExistence()) return false;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        // Prepare callback
+        callbackAction = CALLBACK_GETDIRPATH;
+        sharedVar = filename;
+        // Prepare query
+        std::string query = "SELECT name FROM file WHERE id = ";
+        query += std::to_string(id);
+        query += ';';
+        // Execute query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
+            return false;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
+        return true;
     }
 }

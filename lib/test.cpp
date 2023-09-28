@@ -133,6 +133,27 @@ int main() {
         } else std::cout << "FTagMgrLib error." << std::endl;
     }
 
+    // Check file existence again
+    sres = -2;
+    sres = ftagmgr::fileExists(1, "test.cpp", &err);
+    switch (sres) {
+        case 1:
+            std::cout << "Existent file check OK." << std::endl;
+            break;
+        case 0:
+            std::cout << "Existent file check failed." << std::endl << "Existent file reported as not existing." << std::endl;
+            break;
+        default:
+        case -1:
+            std::cout << "Existent file check failed." << std::endl;
+            if (err) {
+                std::cout << "SQLite3 error." << std::endl << err << std::endl;
+                sqlite3_free(err);
+                err = nullptr;
+            } else std::cout << "FTagMgrLib error." << std::endl;
+            break;
+    }
+
     // Get file ID
     ires = -1;
     ires = ftagmgr::getFile(1, "test.cpp", &err);
@@ -144,5 +165,29 @@ int main() {
             err = nullptr;
         } std::cout << "FTagMgrLib error." << std::endl;
     } else std::cout << "Getting the file ID OK. (" << ires << ')' << std::endl;
+
+    // Get filename
+    strres = "";
+    if (ftagmgr::getFileName(1, &strres, &err)) std::cout << "Getting filename OK. (\"" << strres << "\")" << std::endl;
+    else {
+        std::cout << "Getting filename failed." << std::endl;
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else std::cout << "FTagMgrLib error." << std::endl;
+    }
+
+    // Get filename by ID by filename cause why not
+    strres = "";
+    if (ftagmgr::getFileName(ftagmgr::getFile(1, "test.cpp", &err), &strres, &err)) std::cout << "Getting filename by ID by filename OK. (\"" << strres << "\")" << std::endl;
+    else {
+        std::cout << "Getting filename by ID by filename failed." << std::endl;
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else std::cout << "FTagMgrLib error." << std::endl;
+    }
     return 0;
 }
