@@ -1,7 +1,4 @@
 # Functions
-- bool addFile(unsigned int dir, const char* filename)
-  - False - Error
-  - True - File added
 - unsigned int getFile(unsigned int dir, const char* filename)
   - -1 - Error / doesn't exist
   - (id) - File ID
