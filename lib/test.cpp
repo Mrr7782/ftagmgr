@@ -103,7 +103,7 @@ int main() {
     // Check file existence
     sres = -2;
     sres = ftagmgr::fileExists(1, "test.cpp", &err);
-    switch(sres) {
+    switch (sres) {
         case 1:
             std::cout << "Non-existent file check failed." << std::endl << "Non-existent file reported as existing." << std::endl;
             break;
@@ -132,5 +132,17 @@ int main() {
             err = nullptr;
         } else std::cout << "FTagMgrLib error." << std::endl;
     }
+
+    // Get file ID
+    ires = -1;
+    ires = ftagmgr::getFile(1, "test.cpp", &err);
+    if (ires == -1) {
+        std::cout << "Getting the file ID failed." << std::endl;
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } std::cout << "FTagMgrLib error." << std::endl;
+    } else std::cout << "Getting the file ID OK. (" << ires << ')' << std::endl;
     return 0;
 }

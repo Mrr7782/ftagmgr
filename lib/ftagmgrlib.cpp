@@ -56,7 +56,7 @@ namespace ftagmgr {
                 break;
             case CALLBACK_GETID:
                 // Return argv if possible
-                if (argc) *(unsigned int*)sharedVar = strtoul(argv[0], nullptr, 10);
+                if (argc) *(int*)sharedVar = std::stoi(argv[0], nullptr, 10);
                 break;
             case CALLBACK_GETDIRPATH:
                 // Copy path char* if possible
@@ -188,7 +188,7 @@ namespace ftagmgr {
         sqlite3_open(databasePath.c_str(), &db);
         if (!db) return -1;
         // Prepare callback
-        unsigned int res = 0;
+        int res = -1;
         callbackAction = CALLBACK_GETID;
         sharedVar = &res;
         // Prepare query
@@ -315,5 +315,43 @@ namespace ftagmgr {
             sqlite3_close(db);
             return true;
         } else return false;
+    }
+
+    /**
+     * @brief Get file ID by dir and filename
+     * @param dir Directory ID
+     * @param filename Name of the file
+     * @param errmsg SQLite error message char**
+     * @retval -1 Error or file doesn't exist
+     * @return The ID of the file
+     */
+    int getFile(unsigned int dir, const char* filename, char** errmsg) {
+        // Check database file existence
+        if (!checkDatabaseExistence()) return -1;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        // Prepare callback
+        callbackAction = CALLBACK_GETID;
+        int res = -1;
+        sharedVar = &res;
+        // Prepare query
+        std::string query = "SELECT id FROM file WHERE dir = ";
+        query += std::to_string(dir);
+        query += " AND name = \"";
+        query += filename;
+        query += "\";";
+        // Execute query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            return -1;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
+        return res;
     }
 }

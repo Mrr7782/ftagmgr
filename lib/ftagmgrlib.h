@@ -79,4 +79,14 @@ namespace ftagmgr {
      * @retval false File could not be added
      */
     bool addFile(unsigned int dir, const char* filename, char** errmsg);
+
+    /**
+     * @brief Get file ID by dir and filename
+     * @param dir Directory ID
+     * @param filename Name of the file
+     * @param errmsg SQLite error message char**
+     * @retval -1 Error or file doesn't exist
+     * @return The ID of the file
+     */
+    int getFile(unsigned int dir, const char* filename, char** errmsg);
 }
