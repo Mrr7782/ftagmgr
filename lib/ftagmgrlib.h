@@ -69,4 +69,14 @@ namespace ftagmgr {
      * @retval 1 File does exist
      */
     short fileExists(unsigned int dir, const char* filename, char** errmsg);
+
+    /**
+     * @brief Adds a file to the database
+     * @param dir Directory ID
+     * @param filename Name of the file to add
+     * @param errmsg SQLite error message char**
+     * @retval true File added successfully
+     * @retval false File could not be added
+     */
+    bool addFile(unsigned int dir, const char* filename, char** errmsg);
 }

@@ -281,4 +281,39 @@ namespace ftagmgr {
         sharedVar = nullptr;
         return result;
     }
+
+    /**
+     * @brief Adds a file to the database
+     * @param dir Directory ID
+     * @param filename Name of the file to add
+     * @param errmsg SQLite error message char**
+     * @retval true File added successfully
+     * @retval false File could not be added
+     */
+    bool addFile(unsigned int dir, const char* filename, char** errmsg) {
+        // Check directory file existence
+        if (!checkDatabaseExistence()) return false;
+        // Check file existince in database
+        if (!fileExists(dir, filename, errmsg)) {
+            // Open database
+            sqlite3* db = nullptr;
+            int ecode = 0;
+            sqlite3_open(databasePath.c_str(), &db);
+            // Prepare query
+            std::string query = "INSERT INTO file(dir, name) VALUES(";
+            query += std::to_string(dir);
+            query += ", \"";
+            query += filename;
+            query += "\");";
+            // Run query
+            ecode = sqlite3_exec(db, query.c_str(), nullptr, nullptr, errmsg);
+            if (ecode != SQLITE_OK) {
+                sqlite3_close(db);
+                return false;
+            }
+            // Close database and return
+            sqlite3_close(db);
+            return true;
+        } else return false;
+    }
 }

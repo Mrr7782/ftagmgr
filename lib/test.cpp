@@ -120,5 +120,17 @@ int main() {
             } else std::cout << "FTagMgrLib error." << std::endl;
             break;
     }
+
+    // Add file
+    if (ftagmgr::addFile(1, "test.cpp", &err)) {
+        std::cout << "File addition OK." << std::endl;
+    } else {
+        std::cout << "File addition failed." << std::endl;
+        if (err) {
+            std::cout << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+        } else std::cout << "FTagMgrLib error." << std::endl;
+    }
     return 0;
 }
