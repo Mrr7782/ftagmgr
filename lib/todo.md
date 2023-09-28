@@ -1,8 +1,4 @@
 # Functions
-- short fileExists(unsigned int dir, const char* filename)
-  - -1 - Error
-  - 0 - Does not exist
-  - 1 - Exists
 - bool addFile(unsigned int dir, const char* filename)
   - False - Error
   - True - File added

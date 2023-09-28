@@ -51,6 +51,7 @@ namespace ftagmgr {
                 break;
             case CALLBACK_DIRCHECK:
                 // If something was returned, the dir was found
+                // or file
                 if (argc) *(bool*)sharedVar = true;
                 break;
             case CALLBACK_GETID:
@@ -136,6 +137,7 @@ namespace ftagmgr {
         // Close database and return
         sqlite3_close(db);
         callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
         return result ? 1 : 0;
     }
 
@@ -202,6 +204,7 @@ namespace ftagmgr {
         // Close database and return
         sqlite3_close(db);
         callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
         return res;
     }
 
@@ -236,6 +239,46 @@ namespace ftagmgr {
         // Close database and return
         sqlite3_close(db);
         callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
         return true;
+    }
+
+    /**
+     * @brief Check the existence of a file in the database
+     * @param dir Directory ID
+     * @param filename Name of the file to check
+     * @param errmsg SQLite error message char**
+     * @retval -1 An error has occurred
+     * @retval 0 File does not exist
+     * @retval 1 File does exist
+     */
+    short fileExists(unsigned int dir, const char* filename, char** errmsg) {
+        // Check database existence
+        if (!checkDatabaseExistence()) return -1;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        // Prepare callback
+        bool result = false;
+        sharedVar = &result;
+        callbackAction = CALLBACK_DIRCHECK;
+        // Prepare query
+        std::string query = "SELECT id FROM file WHERE dir = ";
+        query += std::to_string(dir);
+        query += " AND name = \"";
+        query += filename;
+        query += "\";";
+        // Run query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            return -1;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
+        return result;
     }
 }

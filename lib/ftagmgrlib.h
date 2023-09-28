@@ -58,4 +58,15 @@ namespace ftagmgr {
      * @retval false An error has occurred
      */
     bool getDirPath(unsigned int id, std::string* path, char** errmsg);
+
+    /**
+     * @brief Check the existence of a file in the database
+     * @param dir Directory ID
+     * @param filename Name of the file to check
+     * @param errmsg SQLite error message char**
+     * @retval -1 An error has occurred
+     * @retval 0 File does not exist
+     * @retval 1 File does exist
+     */
+    short fileExists(unsigned int dir, const char* filename, char** errmsg);
 }
