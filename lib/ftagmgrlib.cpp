@@ -179,7 +179,7 @@ namespace ftagmgr {
      * @retval -1 Error or directory doesn't exist
      * @return The ID of the directory
      */
-    unsigned int getDir(const char* path, char** errmsg) {
+    int getDir(const char* path, char** errmsg) {
         // Check database existence
         if (!checkDatabaseExistence()) return -1;
         // Open database

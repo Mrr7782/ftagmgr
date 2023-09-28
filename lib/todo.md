@@ -1,5 +1,5 @@
 # Functions
-- unsigned int getFile(unsigned int dir, const char* filename)
+- int getFile(unsigned int dir, const char* filename)
   - -1 - Error / doesn't exist
   - (id) - File ID
 - bool getFileName(unsigned int id, char* filename)

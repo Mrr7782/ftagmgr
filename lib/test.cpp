@@ -64,15 +64,15 @@ int main() {
     }
 
     // Get directory ID
-    unsigned int uires = ftagmgr::getDir("/tmp/test", &err);
-    if (uires == -1) {
+    int ires = ftagmgr::getDir("/tmp/test", &err);
+    if (ires == -1) {
         std::cout << "Getting the directory ID failed, ";
         if (err) {
             std::cout << "SQLite3 error." << std::endl << err << std::endl;
             sqlite3_free(err);
             err = nullptr;
         } else std::cout << "FTagMgrLib error." << std::endl;
-    } else std::cout << "Getting the directory ID OK. (" << uires << ")" << std::endl;
+    } else std::cout << "Getting the directory ID OK. (" << ires << ")" << std::endl;
 
     // Get directory path
     std::string strres = "";
