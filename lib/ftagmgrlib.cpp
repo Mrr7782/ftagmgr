@@ -98,6 +98,14 @@ namespace ftagmgr {
             sqlite3_close(db);
             return false;
         }
+        // Create table tag
+        ecode = sqlite3_exec(db, "CREATE TABLE tag("
+                                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                 "tag VARCHAR(64) UNIQUE NOT NULL);", nullptr, nullptr, errmsg);
+        if (ecode != SQLITE_OK)  {
+            sqlite3_close(db);
+            return false;
+        }
         // Close db and return true
         sqlite3_close(db);
         return true;
