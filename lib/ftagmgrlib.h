@@ -109,4 +109,13 @@ namespace ftagmgr {
      * @retval 1 Tag exists
      */
     short tagExists(const char* value, char** errmsg);
+
+    /**
+     * @brief Add a tag into the database
+     * @param value Tag name
+     * @param errmsg SQLite error message char**
+     * @retval false Error
+     * @retval true Added successfully
+     */
+    bool addTag(const char* value, char** errmsg);
 }

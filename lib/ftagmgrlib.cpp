@@ -449,4 +449,34 @@ namespace ftagmgr {
         sharedVar = nullptr;
         return result ? 1 : 0;
     }
+
+    /**
+     * @brief Add a tag into the database
+     * @param value Tag name
+     * @param errmsg SQLite error message char**
+     * @retval false Error
+     * @retval true Added successfully
+     */
+    bool addTag(const char* value, char** errmsg) {
+        // Check database file existence
+        if (!checkDatabaseExistence()) return false;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        if (!db) return false;
+        // Prepare query
+        std::string query = "INSERT INTO tag(tag) VALUES('";
+        query += value;
+        query += "');";
+        // Execute query
+        ecode = sqlite3_exec(db, query.c_str(), nullptr, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            return false;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        return true;
+    }
 }

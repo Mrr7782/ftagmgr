@@ -1,7 +1,4 @@
 # Functions
-- bool addTag(const char* value, char** errmsg)
-  - false Error
-  - true Added successfully
 - int getTag(const char* value, char** errmsg)
   - -1 Error or doesn't exist
   - (ID) Tag ID
