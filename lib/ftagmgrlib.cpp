@@ -52,6 +52,7 @@ namespace ftagmgr {
             case CALLBACK_DIRCHECK:
                 // If something was returned, the dir was found
                 // or file
+                // or tag, whatever, basically whatever it is we were looking for was found
                 if (argc) *(bool*)sharedVar = true;
                 break;
             case CALLBACK_GETID:
@@ -134,9 +135,9 @@ namespace ftagmgr {
         callbackAction = CALLBACK_DIRCHECK;
         sharedVar = &result;
         // Run query
-        std::string query = "SELECT id FROM dir WHERE path = \"";
+        std::string query = "SELECT id FROM dir WHERE path = '";
         query += path;
-        query += "\";";
+        query += "';";
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
             sqlite3_close(db);
@@ -167,9 +168,9 @@ namespace ftagmgr {
             sqlite3_open(databasePath.c_str(), &db);
             if (!db) return false;
             // Prepare query
-            std::string query = "INSERT INTO dir(path) VALUES(\"";
+            std::string query = "INSERT INTO dir(path) VALUES('";
             query += path;
-            query += "\");";
+            query += "');";
             // Run query
             ecode = sqlite3_exec(db, query.c_str(), nullptr, nullptr, errmsg);
             if (ecode != SQLITE_OK) {
@@ -202,9 +203,9 @@ namespace ftagmgr {
         callbackAction = CALLBACK_GETID;
         sharedVar = &res;
         // Prepare query
-        std::string query = "SELECT id FROM dir WHERE path = \"";
+        std::string query = "SELECT id FROM dir WHERE path = '";
         query += path;
-        query += "\";";
+        query += "';";
         // Run query
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
@@ -280,9 +281,9 @@ namespace ftagmgr {
         // Prepare query
         std::string query = "SELECT id FROM file WHERE dir = ";
         query += std::to_string(dir);
-        query += " AND name = \"";
+        query += " AND name = '";
         query += filename;
-        query += "\";";
+        query += "';";
         // Run query
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
@@ -318,9 +319,9 @@ namespace ftagmgr {
             // Prepare query
             std::string query = "INSERT INTO file(dir, name) VALUES(";
             query += std::to_string(dir);
-            query += ", \"";
+            query += ", '";
             query += filename;
-            query += "\");";
+            query += "');";
             // Run query
             ecode = sqlite3_exec(db, query.c_str(), nullptr, nullptr, errmsg);
             if (ecode != SQLITE_OK) {
@@ -355,9 +356,9 @@ namespace ftagmgr {
         // Prepare query
         std::string query = "SELECT id FROM file WHERE dir = ";
         query += std::to_string(dir);
-        query += " AND name = \"";
+        query += " AND name = '";
         query += filename;
-        query += "\";";
+        query += "';";
         // Execute query
         ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
         if (ecode != SQLITE_OK) {
@@ -408,5 +409,44 @@ namespace ftagmgr {
         callbackAction = CALLBACK_NULL;
         sharedVar = nullptr;
         return true;
+    }
+
+    /**
+     * @brief Check the existence of a tag in the database
+     * @param value Tag name
+     * @param errmsg SQLite error message char**
+     * @retval -1 Error
+     * @retval 0 Tag does not exist
+     * @retval 1 Tag exists
+     */
+    short tagExists(const char* value, char** errmsg) {
+        // Check database file existence
+        if (!checkDatabaseExistence()) return false;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        if (!db) return -1;
+        // Prepare callback
+        callbackAction = CALLBACK_DIRCHECK;
+        bool result = false;
+        sharedVar = &result;
+        // Prepare query
+        std::string query = "SELECT id FROM tag WHERE tag = '";
+        query += value;
+        query += "';";
+        // Execute query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
+            return -1;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
+        return result ? 1 : 0;
     }
 }

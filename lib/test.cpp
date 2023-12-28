@@ -189,5 +189,24 @@ int main() {
             err = nullptr;
         } else std::cout << "FTagMgrLib error." << std::endl;
     }
+
+    // Non-existent tag check
+    sres = -1;
+    sres = ftagmgr::tagExists("sketch", &err);
+    std::cout << "Non-existent tag check ";
+    switch (sres) {
+        default:
+        case 1:
+            std::cout << "failed." << std::endl << "FTagMgrLib error." << std::endl;
+            break;
+        case 0:
+            std::cout << "OK." << std::endl;
+            break;
+        case -1:
+            std::cout << "failed." << std::endl << "SQLite3 error." << std::endl << err << std::endl;
+            sqlite3_free(err);
+            err = nullptr;
+            break;
+    }
     return 0;
 }

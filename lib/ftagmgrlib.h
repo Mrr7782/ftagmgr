@@ -99,4 +99,14 @@ namespace ftagmgr {
      * @retval false An error has occurred
      */
     bool getFileName(unsigned int id, std::string* filename, char** errmsg);
+
+    /**
+     * @brief Check the existence of a tag in the database
+     * @param value Tag name
+     * @param errmsg SQLite error message char**
+     * @retval -1 Error
+     * @retval 0 Tag does not exist
+     * @retval 1 Tag exists
+     */
+    short tagExists(const char* value, char** errmsg);
 }

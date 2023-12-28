@@ -1,8 +1,4 @@
 # Functions
-- short tagExists(const char* value, char** errmsg)
-  - -1 Error
-  - 0 Does not exist
-  - 1 Exists
 - bool addTag(const char* value, char** errmsg)
   - false Error
   - true Added successfully
