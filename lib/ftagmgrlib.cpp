@@ -15,7 +15,6 @@ namespace ftagmgr {
     enum_callback callbackAction = CALLBACK_NULL;
     // Used for callback
     void* sharedVar = nullptr;
-
     
     /**
      * @brief Set the database path string
@@ -74,8 +73,6 @@ namespace ftagmgr {
      * @retval false Database creation failed - check for file existence and/or write access to directory
      */
     bool createDatabase(char** errmsg) {
-        // Check that the database file doesn't exist
-        if(checkDatabaseExistence()) return false;
         // Open (create) database, check if it's open
         sqlite3* db = nullptr;
         int ecode = 0; //Exit code
@@ -121,8 +118,6 @@ namespace ftagmgr {
      * @retval 1 Directory does exist
      */
     short dirExists(const char* path, char** errmsg) {
-        // Check database file existence
-        if (!checkDatabaseExistence()) return -1;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -191,8 +186,6 @@ namespace ftagmgr {
      * @return The ID of the directory
      */
     int getDir(const char* path, char** errmsg) {
-        // Check database existence
-        if (!checkDatabaseExistence()) return -1;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -230,8 +223,6 @@ namespace ftagmgr {
      * @retval false An error has occurred
      */
     bool getDirPath(unsigned int id, std::string* path, char** errmsg) {
-        // Check database existence
-        if (!checkDatabaseExistence()) return false;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -268,8 +259,6 @@ namespace ftagmgr {
      * @retval 1 File does exist
      */
     short fileExists(unsigned int dir, const char* filename, char** errmsg) {
-        // Check database existence
-        if (!checkDatabaseExistence()) return -1;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -308,8 +297,6 @@ namespace ftagmgr {
      * @retval false File could not be added
      */
     bool addFile(unsigned int dir, const char* filename, char** errmsg) {
-        // Check directory file existence
-        if (!checkDatabaseExistence()) return false;
         // Check file existince in database
         if (!fileExists(dir, filename, errmsg)) {
             // Open database
@@ -343,8 +330,6 @@ namespace ftagmgr {
      * @return The ID of the file
      */
     int getFile(unsigned int dir, const char* filename, char** errmsg) {
-        // Check database file existence
-        if (!checkDatabaseExistence()) return -1;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -383,8 +368,6 @@ namespace ftagmgr {
      * @retval false An error has occurred
      */
     bool getFileName(unsigned int id, std::string* filename, char** errmsg) {
-        // Check database file existence
-        if (!checkDatabaseExistence()) return false;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -420,8 +403,6 @@ namespace ftagmgr {
      * @retval 1 Tag exists
      */
     short tagExists(const char* value, char** errmsg) {
-        // Check database file existence
-        if (!checkDatabaseExistence()) return false;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -458,8 +439,6 @@ namespace ftagmgr {
      * @retval true Added successfully
      */
     bool addTag(const char* value, char** errmsg) {
-        // Check database file existence
-        if (!checkDatabaseExistence()) return false;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
@@ -488,8 +467,6 @@ namespace ftagmgr {
      * @return Tag ID
      */
     int getTag(const char* value, char** errmsg) {
-        // Check database file existence
-        if (!checkDatabaseExistence()) return -1;
         // Open database
         sqlite3* db = nullptr;
         int ecode = 0;
