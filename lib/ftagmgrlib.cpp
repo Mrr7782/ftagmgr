@@ -479,4 +479,42 @@ namespace ftagmgr {
         sqlite3_close(db);
         return true;
     }
+    
+    /**
+     * @brief Gets tag ID by tag name
+     * @param value Tag name
+     * @param errmsg SQLite error message char**
+     * @retval -1 Error or tag does not exist
+     * @return Tag ID
+     */
+    int getTag(const char* value, char** errmsg) {
+        // Check database file existence
+        if (!checkDatabaseExistence()) return -1;
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        if (!db) return -1;
+        // Prepare callback
+        callbackAction = CALLBACK_GETID;
+        int result = -1;
+        sharedVar = &result;
+        // Prepare query
+        std::string query = "SELECT id FROM tag WHERE tag = '";
+        query += value;
+        query += "';";
+        // Execute query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
+            return -1;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
+        return result;
+    }
 }

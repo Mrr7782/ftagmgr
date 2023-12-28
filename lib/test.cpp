@@ -237,5 +237,17 @@ int main() {
             err = nullptr;
             break;
     }
+
+    // Tag ID by name check
+    ires = -1;
+    ires = ftagmgr::getTag("sketch", &err);
+    std::cout << "Getting tag ID ";
+    if (err) {
+        std::cout << "failed." << std::endl << "SQLite3 error." << std::endl << err << std::endl;
+        sqlite3_free(err);
+        err = nullptr;
+    } else if (ires == -1) {
+        std::cout << "failed." << std::endl << "FTagMgrLib error." << std::endl;
+    } else std::cout << "OK. (" << ires << ')' << std::endl;
     return 0;
 }

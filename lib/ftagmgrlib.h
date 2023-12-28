@@ -118,4 +118,13 @@ namespace ftagmgr {
      * @retval true Added successfully
      */
     bool addTag(const char* value, char** errmsg);
+
+    /**
+     * @brief Gets tag ID by tag name
+     * @param value Tag name
+     * @param errmsg SQLite error message char**
+     * @retval -1 Error or tag does not exist
+     * @return Tag ID
+     */
+    int getTag(const char* value, char** errmsg);
 }
