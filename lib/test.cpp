@@ -249,5 +249,16 @@ int main() {
     } else if (ires == -1) {
         std::cout << "failed." << std::endl << "FTagMgrLib error." << std::endl;
     } else std::cout << "OK. (" << ires << ')' << std::endl;
+
+    // Tag value by ID check
+    strres = "";
+    std::cout << "Getting tag value by ID ";
+    if(ftagmgr::getTagValue(1, &strres, &err)) {
+        std::cout << "OK. (" << strres << ')' << std::endl;
+    } else if (err) {
+        std::cout << "failed." << std::endl << "SQLite3 error." << std::endl << err << std::endl;
+        sqlite3_free(err);
+        err = nullptr;
+    } else std::cout << "failed." << std::endl << "FTagMgrLib error." << std::endl;
     return 0;
 }

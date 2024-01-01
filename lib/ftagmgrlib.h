@@ -127,4 +127,14 @@ namespace ftagmgr {
      * @return Tag ID
      */
     int getTag(const char* value, char** errmsg);
+
+    /**
+     * @brief Get tag value by ID
+     * @param id Tag ID
+     * @param value Pointer to the return std::string
+     * @param errmsg SQLite error message char**
+     * @retval true Value returned
+     * @retval false Error
+     */
+    bool getTagValue(unsigned int id, std::string* value, char** errmsg);
 }

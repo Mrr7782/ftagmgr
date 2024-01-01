@@ -494,4 +494,40 @@ namespace ftagmgr {
         sharedVar = nullptr;
         return result;
     }
+
+    /**
+     * @brief Get tag value by ID
+     * @param id Tag ID
+     * @param value Pointer to the return std::string
+     * @param errmsg SQLite error message char**
+     * @retval true Value returned
+     * @retval false Error
+     */
+    bool getTagValue(unsigned int id, std::string* value, char** errmsg) {
+        // Open database
+        sqlite3* db = nullptr;
+        int ecode = 0;
+        sqlite3_open(databasePath.c_str(), &db);
+        if (!db) return false;
+        // Prepare callback
+        callbackAction = CALLBACK_GETDIRPATH;
+        sharedVar = value;
+        // Prepare query
+        std::string query = "SELECT tag FROM tag WHERE id = ";
+        query += std::to_string(id);
+        query += ';';
+        // Execute query
+        ecode = sqlite3_exec(db, query.c_str(), callback, nullptr, errmsg);
+        if (ecode != SQLITE_OK) {
+            sqlite3_close(db);
+            callbackAction = CALLBACK_NULL;
+            sharedVar = nullptr;
+            return false;
+        }
+        // Close database and return
+        sqlite3_close(db);
+        callbackAction = CALLBACK_NULL;
+        sharedVar = nullptr;
+        return true;
+    }
 }
